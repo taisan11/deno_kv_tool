@@ -3,7 +3,6 @@ import {red,bold} from "@std/fmt/colors"
 import {isURL, toKey, toValue} from "./until.ts"
 import { list } from "./cmd.ts";
 
-const maincmd = parseArgs(Deno.args);
 let kv = await Deno.openKv()
 const env = Deno.env
 
@@ -18,7 +17,7 @@ while (true) {
   const command = args._[0];
   switch (command) {
     case "APIset": {
-      if (isURL(args._[1] as string)&&!env.has("API_KEY")) {
+      if (isURL(args._[1] as string)&&!env.has("DENO_KV_ACCESS_TOKEN")) {
         console.log(red(bold("API key is not set. You need to set the API key to access Deno Deploy KV.")));
         break;
       }
@@ -58,6 +57,22 @@ while (true) {
     case "remove": {
       const key = toKey(args._[1]);
       await kv.delete(key);
+      break;
+    }
+    case "rm": {
+      const key = toKey(args._[1]);
+      await kv.delete(key);
+      break;
+    }
+    case "clear": {
+      const yn = prompt("Are you sure you want to clear all data? (yes/no)");
+      if (yn === "yes") {
+        const list = kv.list({prefix: []})
+        for await (const key of list) {
+          await kv.delete(key.key);
+        }
+        console.log("Cleared all data");
+      }
       break;
     }
     case "test":{
