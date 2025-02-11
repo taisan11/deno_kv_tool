@@ -1,0 +1,10 @@
+{
+  "tasks": {
+    "dev": "deno run --env -A main.ts"
+  },
+  "unstable": ["kv"],
+  "imports": {
+    "@std/cli": "jsr:@std/cli@^1.0.12",
+    "@std/fmt": "jsr:@std/fmt@^1.0.5"
+  }
+}
